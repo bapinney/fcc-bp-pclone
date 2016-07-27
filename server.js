@@ -1,14 +1,29 @@
+console.log("Starting app...");
+var chalk = require('chalk');
+
+console.log(chalk.bgBlue.white("Loading config..."));
+var config = require('./config/config.js');
+//The require'd file will console.log it has been loaded
+
+var port = process.env.PORT;
+
+console.log(chalk.bgYellow.black("Loading packages..."));
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+if (process.env.APP_ENV == "development") {
+    console.log(chalk.bgBlue.white("App environment is DEVELOPMENT"));
+    app.set('env', 'development');
+}
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -57,8 +72,25 @@ app.use(function(err, req, res, next) {
   });
 });
 
-app.listen(8080, function() {
-    console.log("Server listening");
+console.log(chalk.bgYellow.black("Connecting to MongoDB..."));
+mongoose.connect(process.env.MONGO_URI);
+global.db = mongoose.connection;
+
+global.db.once('open', function () {
+    console.log(chalk.bgGreen.black("Connected to MongoDB."));
+    
+    app.listen(port, function() {
+        process.stdout.write('\x07'); //BEEP
+        console.log(chalk.bgGreen.black(`Listening on port ${port}.`));
+    });
+    
+});
+
+global.db.on('error', function(error) {
+    console.error("Mongoose connection error: ");
+    console.dir(error);
+    console.log("Exiting...");
+    process.exit(); //Exits with 'success' code 0 (i.e., clean exit)
 });
 
 module.exports = app;
