@@ -1,0 +1,42 @@
+div(class="container container-outer")
+    header
+        nav(class="navbar navbar-default")
+            //- http://getbootstrap.com/components/#navbar to explain the DIV
+            div(class="container-fluid")
+                div(class="navbar-header")
+                    button(type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse" aria-expanded="false")
+                        span(class="sr-only") Toggle navigation
+                        span(class="icon-bar")
+                        span(class="icon-bar")
+                        span(class="icon-bar")
+                    a(class="navbar-brand" href="/#" title="Did you like the word play?")
+                        |free
+                        span(class="brand-red") Pin
+                        |Camp
+                //- /navbar-header
+                div(class="collapse navbar-collapse" target="navbar-collapse")
+                    ul(class="nav navbar-nav")
+                        if typeof username != 'undefined'
+                            li 
+                                a(data-ui-sref="mypins" accesskey="m") 
+                                    u M
+                                    |y Pins
+                            li
+                                a(data-ui-sref="recent" accesskey="r") 
+                                    u R
+                                    |ecent Pins
+                    ul(class="nav navbar-nav navbar-right")
+                        if typeof username != 'undefined'
+                            li(id="li-sign-out")
+                                a(accesskey="s" ui-sref="logout" id="sign-out" title="Sign out")
+                                    i(class="fa fa-sign-out" display="inline !important" aria-hidden="true")
+                                    |&nbsp;Sign out #{username}
+                        else
+                            li(id="li-sign-in")
+                                //- Do not change to ui-sref as we actually need to leave the site for auth
+                                a(accesskey="s" href="/auth/twitter" id="sign-in" title="Sign in")
+                                    i(aria-hidden="true" class="fa fa-twitter-square" style="display: inline !important;")
+                                    |&nbsp;
+                                    u S
+                                    |ign In
+                //- /navbar-collapse
