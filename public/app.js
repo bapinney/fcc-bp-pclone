@@ -1,6 +1,8 @@
 $(function() { //Document ready
-    var app = angular.module("fcc-bp-pclone", ['ui.router', 'ngAnimate']);
-    app.config(function ($stateProvider, $urlRouterProvider) {
+    //var routerApp = angular.module("fcc-bp-pclone", ['ui.router', 'ngAnimate']);
+    var routerApp = angular.module('fcc-bp-pclone', ['ui.router']);
+    routerApp.config(function ($stateProvider, $urlRouterProvider) {
+        console.log("Inside router!!!");
         console.log(typeof $urlRouterProvider);
         $urlRouterProvider.otherwise('/home'); //Where we go if there is no route
 
@@ -35,7 +37,7 @@ $(function() { //Document ready
             $(event.target.parentElement).addClass("navKbSelect");
             $(event.target.parentElement).one("webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend", function(event) {
                 console.log("Animation ended...");
-                console.dir(event);
+                //console.dir(event);
                 $(event.target).removeClass("navKbSelect");
             });     
         }
