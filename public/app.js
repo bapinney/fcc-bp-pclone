@@ -18,6 +18,13 @@ ngApp.config(function ($stateProvider, $urlRouterProvider) {
             url: '/recent',
             templateUrl: 'recent'
         });
+    
+    //When a user returns from auth
+    $stateProvider.state('loginRtn', {
+        url: '/loginRtn',
+        templateUrl: 'loginrtn'
+    });
+    
 });
 
 ngApp.controller('newPin', ['$scope', function($scope) {
@@ -27,6 +34,28 @@ ngApp.controller('newPin', ['$scope', function($scope) {
             console.dir(data);
         });
     };
+    
+    $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) { 
+        //console.log(fromState); //will give the object of old state
+        //console.log(toState); //will give the object of current state
+        //console.log(toState.name); //current state name
+        if (toState.name == 'newpin') {
+            console.log("%c At newpin!", "color:blue; font-size:20px");
+            $("#addNewForm input[name=url]").keydown(function() {
+                console.log("Ow!!!");
+            });
+        }
+        
+    });
+    
+    $scope.UrlImg = /^https?:\/\/[\w./]+\/[\w./]+\.(bmp|png|jpg|jpeg|gif)$/;
+    
+    //Note, this function only gets called when ng-change detects an ng-valid change
+    $scope.foo = function() {
+        console.log("At foo");
+        console.dir($scope.addNewForm);
+    }
+    
 }]);
 
 $(function() { //Document ready
@@ -50,4 +79,5 @@ $(function() { //Document ready
             });     
         }
     });
+    
 });

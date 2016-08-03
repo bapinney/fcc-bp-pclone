@@ -37,12 +37,16 @@ router.get('/auth/twitter', function(req, res, next) {
 
 
 router.get('/auth/twitter/callback', passport.authenticate('twitter', {
-	successRedirect : '/',
+	successRedirect : '/#/loginRtn',
 	failureRedirect : '/'
 }));
 
 router.get('/login', function(req, res, next) {
     res.render('login.pug');
+});
+
+router.get ('/loginRtn', function(req, res, next) {
+    res.render("loginrtn.pug");
 });
 
 router.get('/mypins', loggedIn, function(req, res, next) {

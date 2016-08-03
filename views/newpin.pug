@@ -1,17 +1,21 @@
 h1 New Pin
-div(id="upload-div" ng-controller="newPin")
+div(id="add-div" ng-controller="newPin")
     div(id="image-placeholder")
         span image preview
-    form(id="add-new-form")
+    form(id="addNewForm")
         label(for="title") 
-            | Title
+            | Pin 
+            u T
+            |itle
         br
-        input(type="text" name="title" id="title")
+        input(type="text" accesskey="t" name="title" id="title")
         br
         label(for="source")
-            |URL
+            |Pin 
+            u U
+            |RL
         br
-        input(type="text" name="source" id="source")
+        input(type="text" accesskey="u" name="url" ng-change="foo()" ng-model="model" ng-minlength="10" ng-pattern="UrlImg")
         br
         button(class="btn-success" ng-click="addPin()" id="button-add")
             |Add
