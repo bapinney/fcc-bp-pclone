@@ -2,6 +2,16 @@ var express = require('express');
 var router = express.Router();
 var passport = require('passport');
 
+//Login check
+var loggedIn = function(req, res, next) {
+    if (req.user) {
+        next();
+    }
+    else {
+        res.redirect('/login');
+    }
+};
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
     console.dir(req);
@@ -30,5 +40,26 @@ router.get('/auth/twitter/callback', passport.authenticate('twitter', {
 	successRedirect : '/',
 	failureRedirect : '/'
 }));
+
+router.get('/login', function(req, res, next) {
+    res.render('login.pug');
+});
+
+router.get('/mypins', loggedIn, function(req, res, next) {
+    res.render('mypins.pug');
+});
+
+router.get('/newpin', loggedIn, function(req, res, next) {
+    res.render('newpin.pug');
+});
+
+router.get('/recent', function(req, res, next) {
+    res.render('recent.pug');
+});
+
+router.post('/add', function(req, res, next) {
+    console.log("ADD called");
+    console.dir(req);
+});
 
 module.exports = router;

@@ -1,27 +1,35 @@
-$(function() { //Document ready
-    //var routerApp = angular.module("fcc-bp-pclone", ['ui.router', 'ngAnimate']);
-    var routerApp = angular.module('fcc-bp-pclone', ['ui.router']);
-    routerApp.config(function ($stateProvider, $urlRouterProvider) {
-        console.log("Inside router!!!");
-        console.log(typeof $urlRouterProvider);
-        $urlRouterProvider.otherwise('/home'); //Where we go if there is no route
+var ngApp = angular.module('fcc-bp-pclone', ['ui.router', 'ngAnimate']);
+ngApp.config(function ($stateProvider, $urlRouterProvider) {
+    console.log("Inside router!!!");
+    console.log(typeof $urlRouterProvider);
+    $urlRouterProvider.otherwise('/recent'); //Where we go if there is no route
 
-        // templateProvider: Provider function that returns HTML content string. See http://angular-ui.github.io/ui-router/site/#/api/ui.router.state.$stateProvider
-        $stateProvider
-            .state('home', {
-                url: '/home',
-                params: {reload: true}, 
-                templateUrl: 'home'
-            })
-            .state('mypins', {
-                url: '/mypins',
-                templateUrl: 'mypins' //Resolves to newpoll.pug in routes.js
-            })
-            .state('recent', {
-                url: '/recent',
-                templateUrl: 'recentpins'
-            });
-    });
+    // templateProvider: Provider function that returns HTML content string. See http://angular-ui.github.io/ui-router/site/#/api/ui.router.state.$stateProvider
+    $stateProvider
+        .state('mypins', {
+            url: '/mypins',
+            templateUrl: 'mypins' //Resolves to newpoll.pug in routes.js
+        })
+        .state('newpin', {
+            url: '/newpin',
+            templateUrl: 'newpin'
+        })
+        .state('recent', {
+            url: '/recent',
+            templateUrl: 'recent'
+        });
+});
+
+ngApp.controller('newPin', ['$scope', function($scope) {
+    $scope.addPin = function() {
+        $.post("add", $("#add-new-form").serialize())
+        .done(function(data) {
+            console.dir(data);
+        });
+    };
+}]);
+
+$(function() { //Document ready
     
     console.log("%cDocument ready", "color:green;");
     if (typeof angular === "undefined") {
@@ -33,15 +41,13 @@ $(function() { //Document ready
     //Also works when an elements acceskey is used (instead of click)
     $(".navbar-nav>li>a").click(function(event) {
         if (event.clientX == 0 && event.clientY == 0) { //Keyboard was used instead of mouse (as clientX & Y is the mouse's position)
-            console.dir(event);
+            //console.dir(event);
             $(event.target.parentElement).addClass("navKbSelect");
             $(event.target.parentElement).one("webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend", function(event) {
-                console.log("Animation ended...");
+                //console.log("Animation ended...");
                 //console.dir(event);
                 $(event.target).removeClass("navKbSelect");
             });     
         }
     });
-    
-    
 });

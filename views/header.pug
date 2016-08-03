@@ -22,14 +22,14 @@ body(ng-app="fcc-bp-pclone")
                                     a(data-ui-sref="mypins" accesskey="m") 
                                         u M
                                         |y Pins
-                                li
-                                    a(data-ui-sref="recent" accesskey="r") 
-                                        u R
-                                        |ecent Pins
+                            li
+                                a(data-ui-sref="recent" accesskey="r") 
+                                    u R
+                                    |ecent Pins
                         ul(class="nav navbar-nav navbar-right")
                             if typeof username != 'undefined'
                                 li(id="li-add-new")
-                                    a(accesskey="n" ui-sref="addnew" id="add-new" title="New Pin")
+                                    a(accesskey="n" ui-sref="newpin" id="add-new" title="New Pin")
                                         i(class="fa fa-plus-circle" display="inline !important" aria-hidden="true")
                                         |&nbsp;
                                         u N
