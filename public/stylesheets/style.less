@@ -29,6 +29,10 @@ main {
     padding: 6px;
 }
 
+main h1 {
+    text-shadow: 2px 2px 2px rgba(0,0,0,0.3);
+}
+
 main.ng-enter {
     /* transition on enter for .5s */
     transition: 300ms;
@@ -46,36 +50,39 @@ main.ng-enter-active {
 }
 
 #add-div input[type=text] {
+    border-radius: 4px;
     transition: 300ms;
+    width: 300px;
 }
 
-#add-div input[type=text].ng-valid.ng-touched {
+#add-div input[type=text].ng-not-empty.ng-touched.ng-valid {
     background-color: lightgreen;
 }
 
-#add-div input[type=text].ng-invalid.ng-touched {
+#add-div input[type=text].ng-invalid.ng-not-empty.ng-touched {
     background-color: lightpink;
 }
 
 #button-add {
+    background-color: #5CB85C;
+    border-color: #4CAE4C;
+    border-radius: 4px;
+    color: white;
     margin-top: 5px;
+    transition: 300ms;
 }
 
-/*
-
-#upload-div input[type=text] {
-    border: 1px outset black;
-    transition: all 500ms;
-    min-width: 25em;
+#button-add:disabled {
+    background-color: #B85C5C;
+    border-color: #AE4C4C;
+    border-radius: 4px;
+    color: darkred;
+    margin-top: 5px;
+    cursor: not-allowed;
 }
 
-#upload-div input[type=text]:focus {
-    background-color: hsl(45, 100%, 95%);
-    border: 1px solid hsl(20, 100%, 75%);
-    box-shadow: 0px 0px 5px hsl(45, 100%, 80%);
-    outline: none;
-}
-*/
+@img-ph-maxw: 400px;
+@img-ph-maxh: 400px;
 
 #image-placeholder {
     text-align: center;
@@ -87,8 +94,8 @@ main.ng-enter-active {
     margin-bottom: 8px;
     min-width: 200px;
     min-height: 200px;
-    max-height: 400px;
-    max-width: 400px;
+    max-height: @img-ph-maxh;
+    max-width: @img-ph-maxw;
     letter-spacing: 1.2em;
     color: darkgrey;
     -webkit-touch-callout: none;
@@ -96,6 +103,13 @@ main.ng-enter-active {
     -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+}
+
+#image-placeholder img {
+    box-shadow: inset 0px 0px 10px rgba(0,0,0,0.2);
+    max-height: @img-ph-maxh;
+    max-width: @img-ph-maxw;
+    object-fit: contain; /* Maintains aspect ratio */
 }
 
 .brand-red {

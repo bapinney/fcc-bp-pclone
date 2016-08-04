@@ -2,10 +2,14 @@ var ngApp = angular.module('fcc-bp-pclone', ['ui.router', 'ngAnimate']);
 ngApp.config(function ($stateProvider, $urlRouterProvider) {
     console.log("Inside router!!!");
     console.log(typeof $urlRouterProvider);
-    $urlRouterProvider.otherwise('/recent'); //Where we go if there is no route
+    $urlRouterProvider.otherwise('/home'); //Where we go if there is no route
 
     // templateProvider: Provider function that returns HTML content string. See http://angular-ui.github.io/ui-router/site/#/api/ui.router.state.$stateProvider
     $stateProvider
+        .state('home', {
+            url: '/home',
+            templateUrl: 'home'
+        })
         .state('mypins', {
             url: '/mypins',
             templateUrl: 'mypins' //Resolves to newpoll.pug in routes.js
@@ -35,25 +39,69 @@ ngApp.controller('newPin', ['$scope', function($scope) {
         });
     };
     
-    $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams) { 
-        //console.log(fromState); //will give the object of old state
-        //console.log(toState); //will give the object of current state
-        //console.log(toState.name); //current state name
-        if (toState.name == 'newpin') {
-            console.log("%c At newpin!", "color:blue; font-size:20px");
-            $("#addNewForm input[name=url]").keydown(function() {
-                console.log("Ow!!!");
-            });
-        }
-        
+    //RegEx for valid image URL
+    $scope.UrlImg = /^https?:\/\/[\w./-]+\/[\w./-]+\.(bmp|png|jpg|jpeg|gif)$/;
+    
+    //Remember we are in the newPin controller already...
+    $scope.$on('$stateChangeSuccess', function() { 
+        console.log("%c At newpin!", "color:blue; font-size:20px");
+        $("#addNewForm input[name=url]").change(function() {
+            console.log("change!");
+        });
     });
     
-    $scope.UrlImg = /^https?:\/\/[\w./]+\/[\w./]+\.(bmp|png|jpg|jpeg|gif)$/;
+    /**
+     * Checks if the form data is valid.  If it is, buttons become enabled for the user to submit the form
+     */
+    var validateForm = function() {
+        
+        //If valid URL but button is disabled...
+        if($scope.UrlImg.test($("#addNewForm input[name=url]")[0].value) && $("#button-add")[0].disabled) {
+            //console.log("undisabling...");
+            $("#button-add")[0].disabled = false;
+        }
+        
+        //If invalid URL but at button is NOT disabled...
+        if(!$scope.UrlImg.test($("#addNewForm input[name=url]")[0].value) && !$("#button-add")[0].disabled) {
+            //console.log("disabling...");
+            $("#button-add")[0].disabled = true;
+        }
+    };
+    
+    
+    /**
+     * Checks to see if an IMG tag needs to be added or the form's image URL field is different from the preview IMG's src ...
+     */
+    var updatePreview = function() {
+        //If the placeholder text or an image is there...
+        if ($("#image-placeholder")[0].children.length > 0) {
+            if ($("#image-placeholder")[0].children[0].tagName == "IMG" && $("#addNewForm input[name=url]")[0].value == $("#image-placeholder")[0].children[0].tagName.src) {
+                console.log("It's the same image, do nothing!");
+            }
+            else {
+                $("#image-placeholder > *").fadeOut(1000).remove();
+            }
+        }
+        
+        //Create, append (as hidden), and fade in
+        var img = document.createElement("img");
+        img.src = $("#addNewForm input[name=url]")[0].value;
+        $(img).hide().appendTo("#image-placeholder").fadeIn(1000);        
+    }
+    
+    $("#button-add").click(function() {
+        console.log("you clicked me!");
+        
+
+    });
+    
+    
     
     //Note, this function only gets called when ng-change detects an ng-valid change
-    $scope.foo = function() {
-        console.log("At foo");
-        console.dir($scope.addNewForm);
+    $scope.urlCheck = function() {
+        console.log("At urlCheck");
+        updatePreview();
+        validateForm();
     }
     
 }]);

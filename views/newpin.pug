@@ -8,14 +8,17 @@ div(id="add-div" ng-controller="newPin")
             u T
             |itle
         br
-        input(type="text" accesskey="t" name="title" id="title")
+        input(type="text" accesskey="t" name="title" id="title" placeholder="name of pin")
         br
         label(for="source")
             |Pin 
             u U
             |RL
         br
-        input(type="text" accesskey="u" name="url" ng-change="foo()" ng-model="model" ng-minlength="10" ng-pattern="UrlImg")
+        input(type="text" accesskey="u" name="url" ng-change="urlCheck()" ng-model="model" ng-minlength="10" ng-pattern="UrlImg" placeholder="http://example.com/image.jpg")
         br
-        button(class="btn-success" ng-click="addPin()" id="button-add")
-            |Add
+        button(accesskey="a" disabled ng-click="addPin()" id="button-add")
+            i(class="fa fa-plus-circle" aria-hidden="true")
+            |&nbsp;
+            u A
+            |dd

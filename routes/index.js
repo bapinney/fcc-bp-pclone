@@ -14,7 +14,6 @@ var loggedIn = function(req, res, next) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    console.dir(req);
     if (typeof req.user !== "undefined") {
         res.render('shell', { title: 'freePinCamp', username: req.user.username });
     }
@@ -40,6 +39,10 @@ router.get('/auth/twitter/callback', passport.authenticate('twitter', {
 	successRedirect : '/#/loginRtn',
 	failureRedirect : '/'
 }));
+
+router.get('/home', function(req, res, next) {
+    res.render("home.pug");
+})
 
 router.get('/login', function(req, res, next) {
     res.render('login.pug');
