@@ -85,6 +85,7 @@ main.ng-enter-active {
 @img-ph-maxh: 400px;
 
 #image-placeholder {
+    box-shadow: inset 0px 0px 10px 10px rgba(0,0,100,.2);
     text-align: center;
     flex-direction: column;
     justify-content: center;
@@ -106,10 +107,14 @@ main.ng-enter-active {
 }
 
 #image-placeholder img {
-    box-shadow: inset 0px 0px 10px rgba(0,0,0,0.2);
+    margin: auto auto;
     max-height: @img-ph-maxh;
     max-width: @img-ph-maxw;
     object-fit: contain; /* Maintains aspect ratio */
+}
+
+#np-debug tt {
+    display: block;
 }
 
 .brand-red {

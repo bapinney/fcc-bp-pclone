@@ -31,6 +31,7 @@ ngApp.config(function ($stateProvider, $urlRouterProvider) {
     
 });
 
+
 ngApp.controller('newPin', ['$scope', function($scope) {
     $scope.addPin = function() {
         $.post("add", $("#add-new-form").serialize())
@@ -45,9 +46,10 @@ ngApp.controller('newPin', ['$scope', function($scope) {
     //Remember we are in the newPin controller already...
     $scope.$on('$stateChangeSuccess', function() { 
         console.log("%c At newpin!", "color:blue; font-size:20px");
-        $("#addNewForm input[name=url]").change(function() {
-            console.log("change!");
-        });
+        
+        //Bring the focus to the Pin Title, as that is the first element in the form...
+        $("#field-title").focus();
+        
     });
     
     /**
@@ -85,17 +87,41 @@ ngApp.controller('newPin', ['$scope', function($scope) {
         
         //Create, append (as hidden), and fade in
         var img = document.createElement("img");
+        console.log("adding onerror");
+        //We are wrapping it in a function() because otherwise we'd be calling that function and setting its value to the onerror property
+        img.onerror = function() { imgErrHandler(img) };
+        //img.addEventListener("error", imgErrHandler(img));
         img.src = $("#addNewForm input[name=url]")[0].value;
         $(img).hide().appendTo("#image-placeholder").fadeIn(1000);        
+    };
+    
+    var imgErrHandler = function(img) {
+        console.log("Image Error handler called...");
+        //Add code to check for naturalWidth...
+        img.onerror = ""; //Prevent recursion...
+        img.src = "/images/brokenimg.png";
+        img.width = 100;
+        img.height = 100;
+        console.dir(img);
     }
     
     $("#button-add").click(function() {
         console.log("you clicked me!");
-        
-
     });
     
+    $("image-placeholder img").on("complete", function() {
+        console.log("img compleded1 fired!");
+    });
     
+    $("img").bind("complete", function() {
+        console.log("img complete fired!");
+    });
+    
+    $( "#image-placeholder" ).on( "error", "img", function( event ) {
+        console.log("This image didn't load!!!!1one");
+    });
+    
+    //Use $("#image-placeholder img")[0].naturalHeight for broken image detection...
     
     //Note, this function only gets called when ng-change detects an ng-valid change
     $scope.urlCheck = function() {

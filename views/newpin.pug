@@ -2,23 +2,33 @@ h1 New Pin
 div(id="add-div" ng-controller="newPin")
     div(id="image-placeholder")
         span image preview
-    form(id="addNewForm")
+    form(id="addNewForm" name="addForm" novalidate)
         label(for="title") 
             | Pin 
             u T
             |itle
         br
-        input(type="text" accesskey="t" name="title" id="title" placeholder="name of pin")
+        input(type="text" accesskey="t" name="title" ng-minlength="3" ng-maxlength="50" ng-model="pin.title" id="field-title" placeholder="name of pin" required)
+        div(ng-show="addForm.title.$error.minlength") Title must be at least 3 characters
+        div(ng-show="addForm.title.$error.maxlength") Title must be at most 50 characters
+        
         br
         label(for="source")
             |Pin 
             u U
             |RL
         br
-        input(type="text" accesskey="u" name="url" ng-change="urlCheck()" ng-model="model" ng-minlength="10" ng-pattern="UrlImg" placeholder="http://example.com/image.jpg")
+        input(type="text" accesskey="u" name="url" id="field-url" ng-change="urlCheck()" ng-model="pin.url" ng-minlength="10" ng-pattern="UrlImg" required  placeholder="http://example.com/image.jpg")
+        p 
         br
-        button(accesskey="a" disabled ng-click="addPin()" id="button-add")
+        button(accesskey="a" ng-click="addPin()" ng-disabled="addForm.$invalid" id="button-add" type="submit")
             i(class="fa fa-plus-circle" aria-hidden="true")
             |&nbsp;
             u A
             |dd
+    div(id="np-debug")
+        tt addForm.title.$valid = {{addForm.title.$valid}}
+        tt addForm.title.$invalid = {{addForm.title.$invalid}}
+        tt addForm.title.$pristine = {{addForm.title.$pristine}}
+        tt addForm.$valid = {{addForm.$valid}}
+        tt addForm.$invalid = {{addForm.$invalid}}
