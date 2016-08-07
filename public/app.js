@@ -36,8 +36,7 @@ ngApp.controller('newPin', function($scope, $http) {
     $scope.addPin = function() {
         console.log("%c Add Pin called", "color:blue; font-size:18px");
         
-        var debugDump = angular.copy(pin);
-        console.dir(debugDump);
+        console.dir($scope.pin);
         
         /*
         $.post("addpin", $("#add-new-form").serialize())
