@@ -32,12 +32,22 @@ ngApp.config(function ($stateProvider, $urlRouterProvider) {
 });
 
 
-ngApp.controller('newPin', ['$scope', function($scope) {
+ngApp.controller('newPin', function($scope, $http) {
     $scope.addPin = function() {
-        $.post("add", $("#add-new-form").serialize())
+        console.log("%c Add Pin called", "color:blue; font-size:18px");
+        
+        var debugDump = angular.copy(pin);
+        console.dir(debugDump);
+        
+        /*
+        $.post("addpin", $("#add-new-form").serialize())
         .done(function(data) {
             console.dir(data);
+            if (data.hasOwnProperty("result") && data.result == "OK") {
+                console.log("%c Add new success!", "color:green; font-size:18px");
+            }
         });
+        */
     };
     
     //RegEx for valid image URL
@@ -46,7 +56,7 @@ ngApp.controller('newPin', ['$scope', function($scope) {
     //Remember we are in the newPin controller already...
     $scope.$on('$stateChangeSuccess', function() { 
         console.log("%c At newpin!", "color:blue; font-size:20px");
-        
+        console.log("$http is typeof " + (typeof $http));
         //Bring the focus to the Pin Title, as that is the first element in the form...
         $("#field-title").focus();
         
@@ -102,24 +112,13 @@ ngApp.controller('newPin', ['$scope', function($scope) {
         img.src = "/images/brokenimg.png";
         img.width = 100;
         img.height = 100;
-        console.dir(img);
+        //console.dir(img);
     }
     
     $("#button-add").click(function() {
         console.log("you clicked me!");
     });
     
-    $("image-placeholder img").on("complete", function() {
-        console.log("img compleded1 fired!");
-    });
-    
-    $("img").bind("complete", function() {
-        console.log("img complete fired!");
-    });
-    
-    $( "#image-placeholder" ).on( "error", "img", function( event ) {
-        console.log("This image didn't load!!!!1one");
-    });
     
     //Use $("#image-placeholder img")[0].naturalHeight for broken image detection...
     
@@ -130,7 +129,7 @@ ngApp.controller('newPin', ['$scope', function($scope) {
         validateForm();
     }
     
-}]);
+});
 
 $(function() { //Document ready
     

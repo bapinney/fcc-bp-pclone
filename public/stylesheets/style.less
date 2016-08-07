@@ -83,14 +83,15 @@ main.ng-enter-active {
 
 @img-ph-maxw: 400px;
 @img-ph-maxh: 400px;
+@img-ph-bw: 3px;
 
 #image-placeholder {
     box-shadow: inset 0px 0px 10px 10px rgba(0,0,100,.2);
     text-align: center;
-    flex-direction: column;
+    align-items: center;
     justify-content: center;
     display: flex;
-    border: 3px outset rgb(0,200,100);
+    border: @img-ph-bw outset rgb(0,200,100);
     border-radius: 4px;
     margin-bottom: 8px;
     min-width: 200px;
@@ -107,9 +108,8 @@ main.ng-enter-active {
 }
 
 #image-placeholder img {
-    margin: auto auto;
-    max-height: @img-ph-maxh;
-    max-width: @img-ph-maxw;
+    max-height: @img-ph-maxh - (2 * @img-ph-bw);
+    max-width: @img-ph-maxw - (2 * @img-ph-bw);
     object-fit: contain; /* Maintains aspect ratio */
 }
 

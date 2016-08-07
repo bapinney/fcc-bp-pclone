@@ -64,9 +64,10 @@ router.get('/recent', function(req, res, next) {
     res.render('recent.pug');
 });
 
-router.post('/add', function(req, res, next) {
+router.post('/addpin', function(req, res, next) {
     console.log("ADD called");
     console.dir(req);
+    res.json({result: "OK"});
 });
 
 module.exports = router;
