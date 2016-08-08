@@ -36,17 +36,23 @@ ngApp.controller('newPin', function($scope, $http) {
     $scope.addPin = function() {
         console.log("%c Add Pin called", "color:blue; font-size:18px");
         
-        console.dir($scope.pin);
+        // The data we want to POST is stored here
+        //console.dir($scope.pin);
         
-        /*
-        $.post("addpin", $("#add-new-form").serialize())
-        .done(function(data) {
-            console.dir(data);
-            if (data.hasOwnProperty("result") && data.result == "OK") {
-                console.log("%c Add new success!", "color:green; font-size:18px");
-            }
+        var req = { //Our POST request
+            method: "POST",
+            url: "/addpin",
+            data: $scope.pin
+        };
+        
+        $http(req).then(function(res) {
+            console.log("Request successful...");
+            console.dir(res);
+        }, function(res) {
+            console.log("%c Request failed", "color:red font-size:18px");
+            console.dir(res);
         });
-        */
+        
     };
     
     //RegEx for valid image URL

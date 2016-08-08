@@ -24,4 +24,4 @@ var pinSchema = new Schema({
     {collection: 'fccpclone-pins'} //The collection will be created if it does not exist
 );
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('Pin', pinSchema);

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
+var pin = require('../controllers/pin');
 
 //Login check
 var loggedIn = function(req, res, next) {
@@ -64,10 +65,10 @@ router.get('/recent', function(req, res, next) {
     res.render('recent.pug');
 });
 
-router.post('/addpin', function(req, res, next) {
+router.post('/addpin', loggedIn, function(req, res, next) {
     console.log("ADD called");
-    console.dir(req);
-    res.json({result: "OK"});
+    console.dir(req.body);
+    pin.create(req, res);
 });
 
 module.exports = router;
