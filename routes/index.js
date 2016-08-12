@@ -49,8 +49,14 @@ router.get('/login', function(req, res, next) {
     res.render('login.pug');
 });
 
-router.get ('/loginRtn', function(req, res, next) {
+router.get('/loginRtn', function(req, res, next) {
     res.render("loginrtn.pug");
+});
+
+//loggedIn middleware is being used because you can't log out if you aren't logged in...
+router.get('/logout', loggedIn, function(req, res, next) {
+    req.logout();
+    res.render('logout.pug');
 });
 
 router.get('/mypins', loggedIn, function(req, res, next) {
