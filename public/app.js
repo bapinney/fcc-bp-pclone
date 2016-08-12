@@ -1,3 +1,4 @@
+//var globalInst;
 var ngApp = angular.module('fcc-bp-pclone', ['ui.router', 'ngAnimate']);
 ngApp.config(function ($stateProvider, $urlRouterProvider) {
     console.log("Inside router!!!");
@@ -31,13 +32,15 @@ ngApp.config(function ($stateProvider, $urlRouterProvider) {
     
 });
 
-
 ngApp.controller('newPin', function($scope, $http) {
     $scope.addPin = function() {
-        console.log("%c Add Pin called", "color:blue; font-size:18px");
+        console.log("%c Add Pin called", "color:blue; font-size:16px");
         
         // The data we want to POST is stored here
         //console.dir($scope.pin);
+        
+        $("#button-add").addClass('addbtn-info');
+        $("#button-add").text("Adding Pin...")
         
         var req = { //Our POST request
             method: "POST",
@@ -47,7 +50,8 @@ ngApp.controller('newPin', function($scope, $http) {
         
         $http(req).then(function(res) {
             console.log("Request successful...");
-            console.dir(res);
+            $("#button-add").text("Added!");
+            setTimeout(function() { document.location.hash = "recent"; }, 2000);
         }, function(res) {
             console.log("%c Request failed", "color:red font-size:18px");
             console.dir(res);
@@ -64,27 +68,7 @@ ngApp.controller('newPin', function($scope, $http) {
         console.log("$http is typeof " + (typeof $http));
         //Bring the focus to the Pin Title, as that is the first element in the form...
         $("#field-title").focus();
-        
     });
-    
-    /**
-     * Checks if the form data is valid.  If it is, buttons become enabled for the user to submit the form
-     */
-    var validateForm = function() {
-        
-        //If valid URL but button is disabled...
-        if($scope.UrlImg.test($("#addNewForm input[name=url]")[0].value) && $("#button-add")[0].disabled) {
-            //console.log("undisabling...");
-            $("#button-add")[0].disabled = false;
-        }
-        
-        //If invalid URL but at button is NOT disabled...
-        if(!$scope.UrlImg.test($("#addNewForm input[name=url]")[0].value) && !$("#button-add")[0].disabled) {
-            //console.log("disabling...");
-            $("#button-add")[0].disabled = true;
-        }
-    };
-    
     
     /**
      * Checks to see if an IMG tag needs to be added or the form's image URL field is different from the preview IMG's src ...
@@ -131,8 +115,90 @@ ngApp.controller('newPin', function($scope, $http) {
     $scope.urlCheck = function() {
         console.log("At urlCheck");
         updatePreview();
-        validateForm();
     }
+    
+});
+
+ngApp.controller('recent', function($scope, $http) {
+    $scope.$on('$stateChangeSuccess', function() { 
+        console.log("%c At recent pins!", "color:orange; font-size:20px");
+        if (typeof $http !== "function") {
+            console.error("%cExpecting $http to be type of function.  $http currently is " + typeof $http, "background-color:black; color: red; font-size:18px");
+        }
+        console.log("$http is typeof " + (typeof $http));
+        console.log("Loading recent pins...");
+        
+        var htconfig = {
+            method: "GET",
+            url: "/rpdata"
+        };
+        
+        var imgRelisten = function() {
+            $("#recent-div").imagesLoaded()
+                .always(function(instance) {
+                    $(".grid").masonry({
+                        itemSelector: '.grid-item',
+                        columnWidth: 0
+                    });
+                });
+        };
+        
+        $http(htconfig).
+            then(function(response) {
+                console.log("At .then\n Removing loading banner...");
+                $("#recent-div").empty();
+                for (var i=0; i < response.data.length; i++) {
+                    var pin = $('<div class="grid-item"></div>');
+                    var img = document.createElement("img");
+                    img.src = response.data[i].imgUrl;
+                    pin.append(img);
+                    var title = response.data[i].title;
+                    var titleDiv = document.createElement("div");
+                    titleDiv.className = "pin-title";
+                    titleDiv.textContent = title;
+                    pin.append(titleDiv);
+                    $("#recent-div").append(pin);
+                }
+                console.dir(response);
+                console.log("Waiting for images to load...");
+                var triggerRelisten = false; //This will get set to true if any image is found broken and we need to wait for its replacement to finish loading
+                $("#recent-div").imagesLoaded()
+                    .always(function(instance) {
+                        console.log("All immages loaded!");
+                        //globalInst = instance;
+                        if (instance.hasAnyBroken === true) {
+                            console.log("%c There are broken images!", "font-color: red; font-size:18px;");
+                            for (var i=0; i < instance.images.length; i++) {
+                                if (!instance.images[i].isLoaded) {
+                                    instance.images[i].img.src = "/images/brokenImg.png";
+                                    triggerRelisten = true;
+                                }
+                            }
+                            if (triggerRelisten) {
+                                imgRelisten();
+                            }
+                        }
+                        //console.dir(instance);
+                        $(".grid").masonry({
+                            itemSelector: '.grid-item',
+                            columnWidth: 0
+                        });
+                    });
+                //
+                
+            }, function(response) {
+                console.log("At failed...");
+                if (typeof $("#loading-div")[0] !== "undefined") {
+                    $("#loading-div").text("Error loading data...");
+                    $("#loading-div").addClass("bg-danger");
+                }
+            })
+        
+        
+        
+    });
+    
+    
     
 });
 

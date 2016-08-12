@@ -26,6 +26,7 @@ main {
     border-radius: 6px;
     box-shadow: inset 0px 0px 2px 2px rgba(0,0,0,.2),
         2px 2px 2px 2px rgba(0,0,0,.2);
+    margin-bottom: 40px;
     padding: 6px;
 }
 
@@ -63,23 +64,46 @@ main.ng-enter-active {
     background-color: lightpink;
 }
 
+@babg-color: hsl(120, 80%, 40%); // Background color
+@babd-color: darken(saturate(@babg-color, 6%), 6%); //Border color
+
 #button-add {
-    background-color: #5CB85C;
-    border-color: #4CAE4C;
+    background-color: @babg-color;
+    border-color: @babd-color;
     border-radius: 4px;
     color: white;
     margin-top: 5px;
-    transition: 300ms;
+    margin-bottom: 20px;
+    box-shadow: 0px 0px 10px @babg-color;
+    transition: 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+#button-add:hover {
+    background-color: #FCB85C;
+    border-color: #FCAE4C;
+    box-shadow: none;
 }
 
 #button-add:disabled {
     background-color: #B85C5C;
     border-color: #AE4C4C;
     border-radius: 4px;
+    box-shadow: none;
     color: darkred;
     margin-top: 5px;
     cursor: not-allowed;
 }
+
+
+@baibg-color: hsl(240, 80%, 40%);
+@baibd-color: darken(saturate(@baibg-color, 6%), 6%);
+
+#button-add.addbtn-info {
+    background-color: @baibg-color;
+    border-color: @baibd-color;
+    box-shadow: none;
+}
+
 
 @img-ph-maxw: 400px;
 @img-ph-maxh: 400px;
@@ -87,6 +111,7 @@ main.ng-enter-active {
 
 #image-placeholder {
     box-shadow: inset 0px 0px 10px 10px rgba(0,0,100,.2);
+    cursor: default; /* Should the standard mouse pointer, instead of the text selection pointer, as this text is not going to be selectable */
     text-align: center;
     align-items: center;
     justify-content: center;
@@ -125,6 +150,24 @@ main.ng-enter-active {
     transform: rotate(-10deg);
 }
 
+.grid-item {
+    background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(252,252,252,1) 84%, rgba(254,252,255,1) 100%);
+    border: 1px solid black;
+    border-radius: 10px;
+    box-shadow: inset 0px 0px 4px rgb(0, 0, 0);
+    float: left;
+    margin: 2px;
+    overflow: hidden;
+    padding: 6px;
+    width: 280px;
+}
+
+.grid-item img {
+    border-radius: 10px;
+    margin-bottom: 5px;
+    width: 100%;
+}
+
 .navbar {
     border: 2px ridge rgba(0,0,0,0.2);
     box-shadow: inset 0px 0px 2px 2px rgba(0,0,0,0.2),
@@ -140,3 +183,7 @@ main.ng-enter-active {
     text-decoration: underline;
 }
 
+.pin-title {
+    font-size: 18px;
+    font-weight: 600; 
+}

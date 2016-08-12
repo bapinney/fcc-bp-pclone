@@ -54,6 +54,7 @@ router.get ('/loginRtn', function(req, res, next) {
 });
 
 router.get('/mypins', loggedIn, function(req, res, next) {
+    //Continue here
     res.render('mypins.pug');
 });
 
@@ -64,6 +65,19 @@ router.get('/newpin', loggedIn, function(req, res, next) {
 router.get('/recent', function(req, res, next) {
     res.render('recent.pug');
 });
+
+router.get('/rpdata', function(req, res, next) {
+    /*
+    Use this to check client-side error handling
+    setTimeout(function() {
+        res.status(500);
+        res.json({error: "Test error"});
+    }, 10000);
+    */
+    
+    res.locals.pinLimit = 12; //Limit the query to just 12 pins...
+    pin.getRecentPins(req, res);
+})
 
 router.post('/addpin', loggedIn, function(req, res, next) {
     console.log("ADD called");

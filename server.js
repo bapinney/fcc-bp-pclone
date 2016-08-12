@@ -1,5 +1,6 @@
 console.log("Starting app...");
 var chalk = require('chalk');
+var assert = require('assert');
 
 console.log(chalk.bgBlue.white("Loading config..."));
 var config = require('./config/config.js');
@@ -161,8 +162,12 @@ app.use(function(err, req, res, next) {
   });
 });
 
-console.log(chalk.bgYellow.black("Connecting to MongoDB..."));
-mongoose.connect(process.env.MONGO_URI);
+console.log(chalk.bgYellow.black("Setting promiseLibrary to Bluebird and connecting to MongoDB..."));
+var mongooseOpts = {
+    // http://mongoosejs.com/docs/promises.html#promises-for-the-mongodb-driver
+    promiseLibrary: require('bluebird')
+}
+mongoose.connect(process.env.MONGO_URI, mongooseOpts);
 global.db = mongoose.connection;
 
 global.db.once('open', function () {

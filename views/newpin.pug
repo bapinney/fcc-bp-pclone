@@ -18,15 +18,14 @@ div(id="add-div" ng-controller="newPin")
             u U
             |RL
         br
-        input(type="text" accesskey="u" name="url" id="field-url" ng-change="urlCheck()" ng-model="pin.url" ng-minlength="10" ng-pattern="UrlImg" required  placeholder="http://example.com/image.jpg")
-        p 
+        input(type="text" accesskey="u" name="url" id="field-url" ng-change="urlCheck()" ng-model="pin.url" ng-minlength="10" ng-pattern="UrlImg" required  placeholder="http:// ... (.bmp, .png, .jpg, .jpeg, or .gif)")
         br
         button(accesskey="a" ng-click="addPin()" ng-disabled="addForm.$invalid" id="button-add" type="submit")
             i(class="fa fa-plus-circle" aria-hidden="true")
             |&nbsp;
             u A
             |dd
-    div(id="np-debug")
+//-    div(id="np-debug")
         tt addForm.title.$valid = {{addForm.title.$valid}}
         tt addForm.title.$invalid = {{addForm.title.$invalid}}
         tt addForm.title.$pristine = {{addForm.title.$pristine}}
