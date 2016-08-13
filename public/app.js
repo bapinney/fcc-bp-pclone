@@ -148,13 +148,17 @@ ngApp.controller('recent', function($scope, $compile, $http) {
             url: "/rpdata"
         };
         
+        var gridInit = function() {
+            $(".grid").masonry({
+                itemSelector: '.grid-item',
+                columnWidth: 0
+            });
+        }
+        
         var imgRelisten = function() {
             $("#recent-div").imagesLoaded()
                 .always(function(instance) {
-                    $(".grid").masonry({
-                        itemSelector: '.grid-item',
-                        columnWidth: 0
-                    });
+                    gridInit();
                 });
         };
         
@@ -171,7 +175,7 @@ ngApp.controller('recent', function($scope, $compile, $http) {
 
                     var voteBtn = document.createElement("button");
                         voteBtn.className = "vote-button";
-                        voteBtn.setAttribute("ng-click", "showAlert()")
+                        voteBtn.setAttribute("ng-click", "showAlert($event)")
                         var star = document.createElement("i");
                         star.className = "fa fa-star";
                         voteBtn.appendChild(star);
@@ -191,8 +195,9 @@ ngApp.controller('recent', function($scope, $compile, $http) {
                         var deleteIcon = document.createElement("i");
                         deleteIcon.className = "fa fa-remove";
                         deleteBtn.appendChild(deleteIcon);
-                        deleteBtn.setAttribute("ng-click", "foo()");
+                        deleteBtn.setAttribute("ng-click", "foo($event)");
                         pin.append(deleteBtn);
+                        $compile(deleteBtn)($scope);
                     }
                     
                     var title = response.data[i].title;
@@ -205,6 +210,7 @@ ngApp.controller('recent', function($scope, $compile, $http) {
                     pinInfo.className = "pin-info";
                     pinInfo.textContent = response.data[i].pinOwner[0].userName;
                     pin.append(pinInfo);
+                    pin[0].setAttribute("data-pin-id", response.data[i]._id);
                     $("#recent-div").append(pin);
                 }
                 console.dir(response);
@@ -247,12 +253,36 @@ ngApp.controller('recent', function($scope, $compile, $http) {
         
     });
     
-    $scope.showAlert = function () {
-            alert("This is an example of ng-click");
+    $scope.showAlert = function(evntVar) {
+            console.dir(evntVar)
         }
     
-    $scope.foo = function() {
-        console.log("bar");
+    $scope.foo = function(evntVar) {
+        var pinId = evntVar.currentTarget.parentNode.dataset.pinId;
+        $http({
+            method: "POST",
+            data: {pinId: pinId},
+            url: "/deletePin"
+        }).then(function(response) {
+            console.dir(response);
+            window.dbgResp2 = response;
+            if (response.data.result == "fail" && typeof response.data.error == "string") {
+                window.alert("There was an error while trying to remove Pin: " + response.data.error);
+            }
+            if (response.data.result == "success") {
+                $('[data-pin-id="' + pinId +'"]').effect({
+                    effect: "explode",
+                    duration: 2000,
+                    complete: function() {
+                        $(this).remove();
+                        $(".grid").masonry({
+                            itemSelector: '.grid-item',
+                            columnWidth: 0
+                        });
+                    }   
+                });
+            }
+        })
     }
     
 });

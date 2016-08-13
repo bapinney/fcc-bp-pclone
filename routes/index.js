@@ -41,9 +41,18 @@ router.get('/auth/twitter/callback', passport.authenticate('twitter', {
 	failureRedirect : '/'
 }));
 
+router.post('/deletePin', function(req, res, next) {
+    if (typeof req.body.pinId !== "string") {
+        res.json({result: "fail", error: "pinId is not string"})
+    }
+    else {
+        res.json({result: "success"});
+    }
+});
+
 router.get('/home', function(req, res, next) {
     res.render("home.pug");
-})
+});
 
 router.get('/login', function(req, res, next) {
     res.render('login.pug');
