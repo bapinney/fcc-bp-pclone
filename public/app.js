@@ -151,7 +151,7 @@ ngApp.controller('recent', function($scope, $compile, $http) {
         var gridInit = function() {
             $(".grid").masonry({
                 itemSelector: '.grid-item',
-                columnWidth: 0
+                columnWidth: 4
             });
         }
         
@@ -195,7 +195,7 @@ ngApp.controller('recent', function($scope, $compile, $http) {
                         var deleteIcon = document.createElement("i");
                         deleteIcon.className = "fa fa-remove";
                         deleteBtn.appendChild(deleteIcon);
-                        deleteBtn.setAttribute("ng-click", "foo($event)");
+                        deleteBtn.setAttribute("ng-click", "delete($event)");
                         pin.append(deleteBtn);
                         $compile(deleteBtn)($scope);
                     }
@@ -236,7 +236,7 @@ ngApp.controller('recent', function($scope, $compile, $http) {
                         //console.dir(instance);
                         $(".grid").masonry({
                             itemSelector: '.grid-item',
-                            columnWidth: 0
+                            columnWidth: 4
                         });
                     });
                 //
@@ -257,7 +257,7 @@ ngApp.controller('recent', function($scope, $compile, $http) {
             console.dir(evntVar)
         }
     
-    $scope.foo = function(evntVar) {
+    $scope.delete = function(evntVar) {
         var pinId = evntVar.currentTarget.parentNode.dataset.pinId;
         $http({
             method: "POST",
@@ -277,7 +277,7 @@ ngApp.controller('recent', function($scope, $compile, $http) {
                         $(this).remove();
                         $(".grid").masonry({
                             itemSelector: '.grid-item',
-                            columnWidth: 0
+                            columnWidth: 4
                         });
                     }   
                 });

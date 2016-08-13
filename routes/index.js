@@ -1,7 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
+var chalk = require('chalk');
 var pin = require('../controllers/pin');
+var Pin = require('../models/pin');
 
 //Login check
 var loggedIn = function(req, res, next) {
@@ -41,13 +43,100 @@ router.get('/auth/twitter/callback', passport.authenticate('twitter', {
 	failureRedirect : '/'
 }));
 
-router.post('/deletePin', function(req, res, next) {
+/*
+router.post('/deletePin', function (req, res, next) {
     if (typeof req.body.pinId !== "string") {
-        res.json({result: "fail", error: "pinId is not string"})
-    }
-    else {
+        res.json({
+            result: "fail",
+            error: "pinId is not string"
+        });
+    } else {
+        console.log(chalk.green("Inside else..."));
+        Pin.findById(req.body.pinId, function (err, doc) {
+            if (err) {
+                console.log(err);
+            }
+            if (doc) {
+            }
+        });
         res.json({result: "success"});
     }
+});
+*/
+
+router.post('/deletePin', function (req, res, next) {
+    if (typeof req.user === "undefined") {
+        res.json({
+            result: "fail",
+            error: "not signed in"
+        });
+        return false;
+    }
+    if (typeof req.body.pinId !== "string") {
+        res.json({
+            result: "fail",
+            error: "pinId is not string"
+        })
+    }
+    var pinId = req.body.pinId
+    Pin.findById(pinId, function (err, doc) {
+        if (err) {
+            console.log("An error!");
+            console.log(err);
+            res.json({
+                result: "fail",
+                error: "pinId not found"
+            });
+        }
+        if (doc) {
+            console.log("doc found!");
+            console.log("Here is pin owner info...");
+            var PO = {};
+            PO.userName      = doc._doc.pinOwner[0].userName;
+            PO.userId        = doc._doc.pinOwner[0].userId;
+            PO.userProvider  = doc._doc.pinOwner[0].userProvider;
+            console.dir(PO);
+            console.log("Here is current user info...");
+            console.dir(req.user);
+            if (req.user.provider == PO.userProvider &&
+                req.user.id       == PO.userId       &&
+                req.user.username == PO.userName) 
+            {   //User Match
+                console.log(chalk.green("We have a match! Removing..."));
+                var dmResult = doc.remove();
+                if (dmResult) {
+                    console.log("Remove successful!");
+                    res.json({
+                        result: "success"
+                    });
+                    return true;
+                }
+                else {
+                    console.log("Remove unsuccessful...");
+                    res.json({
+                        result: "fail",
+                        error: "Unable to remove pin from collection"
+                    });
+                    return false;
+                }
+            }
+            else {
+                console.log(chalk.red("We don't have a match!"));
+                res.json({
+                    result: "fail",
+                    error: "user is not pinOwner"
+                });
+                return false;
+            }
+        }
+        else { //Confirmed we get here if we use a non-existant pinId
+            res.json({
+                result: "fail",
+                error: "cannot locate pinId"
+            });
+            return false;
+        }
+    });
 });
 
 router.get('/home', function(req, res, next) {
