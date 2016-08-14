@@ -37,11 +37,9 @@ exports.create = function(req, res) {
 };
 
 exports.getRecentPins = function(req, res) {
-    //Asynchronous function
     
-    var pins = []; //This will get passed to the pug file
-    
-    var queryLimit = (typeof res.locals.pinLimit == "number" ? res.locals.pinLimit : 4);
+    //Use a hard-coded limit if one was not provided
+    var queryLimit = (typeof res.locals.pinLimit == "number" ? res.locals.pinLimit : 18);
     
     Pin.find(
             {},
@@ -57,4 +55,37 @@ exports.getRecentPins = function(req, res) {
                 res.json({error: "No pins found"});
             }
         });
-}
+};
+
+exports.getUserPins = function(req, res) {
+    
+    //Use a hard-coded limit if one was not provided
+    var queryLimit = (typeof res.locals.pinLimit == "number" ? res.locals.pinLimit : 48);
+    
+    if (typeof res.locals.forUserName == "undefined" || res.locals.forUserName.length == 0) 
+    {
+        res.json({error: "userName undefined or 0 length"});
+        return false;
+    }
+    
+    var forUserName = res.locals.forUserName;
+    
+    console.log(chalk.green("We're in getUserPins..."));
+    console.log(`Querying for ${forUserName}`);
+    
+    Pin.find(
+        {"pinOwner.userName" : forUserName},
+        {"pinOwner.userId": 0, "pinOwner._id": 0} //This is just to get in the habit of learning to exlucde info that is not necessary.  Exposing unneeded or sensitive stuff can be dangerous in future apps which could handle more sensitive data
+    )
+    .limit(queryLimit)
+    .sort({dateCreated: -1}) //Recent, so sort descending...
+    .exec(function(err, docs) {
+        if (docs) {
+            res.json(docs);
+        }
+        else {
+            res.json({error: "No pins found"});
+        }
+    });
+    
+};

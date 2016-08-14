@@ -130,6 +130,116 @@ ngApp.controller('newPin', function($scope, $http) {
     
 });
 
+ngApp.controller('mypins', function($scope, $compile, $http) {
+    $scope.$on('$stateChangeSuccess', function() {
+        console.log("%c At my pins!", "color:orange; font-size:12px");
+        if (typeof $http !== "function") {
+            console.error("%cExpecting $http to be type of function.  $http currently is " + typeof $http, "background-color:black; color: red; font-size:18px");
+        }
+        
+        var htConfig = {
+            method: "GET",
+            url:    "/mpdata"
+        };
+        
+        var gridInit = function() {
+            $('.grid').masonry({
+                itemSelector:   '.grid-item',
+                columnWidth:    4
+            })
+        };
+        
+        console.log("About to make http call for mypin data...");
+        $http(htConfig).
+            then(function(response) {
+                window.dbgResponse = response;
+                console.log("At .then\n Removing loading banner...");
+                $("#loading-div").slideUp();
+                for (var i=0; i < response.data.length; i++) {
+                    var pin = $('<div class="grid-item"></div>');
+                    var img = document.createElement("img");
+                    img.src = response.data[i].imgUrl;
+                    pin.append(img);
+
+                    var voteBtn = document.createElement("button");
+                        voteBtn.className = "vote-button";
+                        voteBtn.setAttribute("ng-click", "showAlert($event)")
+                        var star = document.createElement("i");
+                        star.className = "fa fa-star";
+                        voteBtn.appendChild(star);
+                        var starCount = document.createElement("span");
+                        starCount.className = "star-count";
+                        starCount.textContent = response.data[i].likes.length;
+                        voteBtn.appendChild(starCount);
+                    pin.append(voteBtn);
+                    console.log("Finished appending voteBtn... here is is...");
+                    console.dir(voteBtn);
+                    $compile(voteBtn)($scope);
+                    
+                    if ($("#li-sign-out").data("username") == response.data[i].pinOwner[0].userName) {
+                        var deleteBtn = document.createElement("button");
+                        deleteBtn.className = "delete-button";
+                        deleteBtn.title = "Delete this Pin";
+                        var deleteIcon = document.createElement("i");
+                        deleteIcon.className = "fa fa-remove";
+                        deleteBtn.appendChild(deleteIcon);
+                        deleteBtn.setAttribute("ng-click", "delete($event)");
+                        pin.append(deleteBtn);
+                        $compile(deleteBtn)($scope);
+                    }
+                    
+                    var title = response.data[i].title;
+                    var titleDiv = document.createElement("div");
+                    titleDiv.className = "pin-title";
+                    titleDiv.textContent = title;
+                    pin.append(titleDiv);
+                    
+                    var pinInfo = document.createElement("div");
+                    pinInfo.className = "pin-info";
+                    pinInfo.textContent = response.data[i].pinOwner[0].userName;
+                    pin.append(pinInfo);
+                    pin[0].setAttribute("data-pin-id", response.data[i]._id);
+                    $("#mypins-div").append(pin);
+                }
+                console.dir(response);
+                window.globalResp = response;
+                console.log("Waiting for images to load...");
+                var triggerRelisten = false; //This will get set to true if any image is found broken and we need to wait for its replacement to finish loading
+                $("#mypins-div").imagesLoaded()
+                    .always(function(instance) {
+                        console.log("All immages loaded!");
+                        //globalInst = instance;
+                        if (instance.hasAnyBroken === true) {
+                            console.log("%c There are broken images!", "font-color: red; font-size:12px;");
+                            for (var i=0; i < instance.images.length; i++) {
+                                if (!instance.images[i].isLoaded) {
+                                    instance.images[i].img.src = "/images/brokenImg.png";
+                                    triggerRelisten = true;
+                                }
+                            }
+                            if (triggerRelisten) {
+                                imgRelisten();
+                            }
+                        }
+                        //console.dir(instance);
+                        $(".grid").masonry({
+                            itemSelector: '.grid-item',
+                            columnWidth: 4
+                        });
+                    });
+                //
+                
+            }, function(response) {
+            console.log("At failed...");
+            if (typeof $("#loading-div")[0] !== "undefined") {
+                $("#loading-div").text("Error loading data...");
+                $("#loading-div").addClass("bg-danger");
+            }
+        });
+        
+    });
+});
+
 ngApp.controller('recent', function($scope, $compile, $http) {
     $scope.$on('$stateChangeSuccess', function() { 
         console.log("%c At recent pins!", "color:orange; font-size:20px");
@@ -143,26 +253,26 @@ ngApp.controller('recent', function($scope, $compile, $http) {
         console.log("$http is typeof " + (typeof $http));
         console.log("Loading recent pins...");
         
-        var htconfig = {
+        var htConfig = {
             method: "GET",
             url: "/rpdata"
         };
         
         var gridInit = function() {
             $(".grid").masonry({
-                itemSelector: '.grid-item',
-                columnWidth: 4
+                itemSelector:   '.grid-item',
+                columnWidth:    4
             });
-        }
+        };
         
         var imgRelisten = function() {
             $("#recent-div").imagesLoaded()
-                .always(function(instance) {
-                    gridInit();
-                });
+            .always(function(instance) {
+                gridInit();
+            });
         };
         
-        $http(htconfig).
+        $http(htConfig).
             then(function(response) {
                 window.dbgResponse = response;
                 console.log("At .then\n Removing loading banner...");

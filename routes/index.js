@@ -158,14 +158,21 @@ router.get('/logout', loggedIn, function(req, res, next) {
 });
 
 router.get('/mypins', loggedIn, function(req, res, next) {
-    //Continue here
     res.render('mypins.pug');
 });
+
+//My Pin Data
+router.get('/mpdata', loggedIn, function(req, res, next) {
+    res.locals.forUserName = req.user.username;
+    pin.getUserPins(req, res);
+})
 
 router.get('/newpin', loggedIn, function(req, res, next) {
     res.render('newpin.pug');
 });
 
+
+//Recent Pin data
 router.get('/recent', function(req, res, next) {
     res.render('recent.pug');
 });
@@ -179,9 +186,27 @@ router.get('/rpdata', function(req, res, next) {
     }, 10000);
     */
     
-    res.locals.pinLimit = 12; //Limit the query to just 12 pins...
+    res.locals.pinLimit = 18; //Limit the query to just 18 pins...
     pin.getRecentPins(req, res);
+});
+
+
+//User Pin data
+router.get('/users/*', function(req, res, next) {
+    console.dir(req);
+    if (typeof req.params[0] !== "undefined") {
+        res.locals.forUserName = req.params[0];
+        pin.getUserPins(req, res);
+    }
+    else {
+        res.json({error: "User parameter missing"});
+    }
 })
+
+router.get('/updata', function(req, res, next) {
+    
+});
+
 
 router.post('/addpin', loggedIn, function(req, res, next) {
     console.log("ADD called");

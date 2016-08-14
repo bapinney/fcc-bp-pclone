@@ -188,25 +188,21 @@ main.ng-enter-active {
     font-family: "Nothing You Could Do";
 }
 
-.vote-button {
-    background-color: ghostwhite;
-    border-radius: 5px;
-    float: right;
-    margin: 0px 2px;
-}
 
 .delete-button {
-    background-color: #FFF8F8;
+    background-color: #A54040;
+    border: 2px outset #A54040;
     border-radius: 5px;
-    color: darkred;
+    color: white;
     float: right;
     transition: 300ms cubic-bezier(.22, .61, .36, 1);
 }
 
 .delete-button:hover {
-    background-color: darkred;
+    background-color: black;
+    border: 2px groove black;
     border-radius: 5px;
-    color: white;
+    color: #A54040;
     float: right
 }
 
@@ -217,4 +213,25 @@ main.ng-enter-active {
 
 .star-count {
     margin-left: 5px;
+}
+
+.vote-button {
+    background-color: #4040A5;
+    border: 2px outset #4040A5;
+    border-radius: 5px;
+    color: white;
+    float: right;
+    margin: 0px 2px;
+    transition: 300ms cubic-bezier(.22, .61, .36, 1);
+}
+
+.vote-button:hover {
+    background-color: hsl(45, 100%, 45%);
+    border: 2px groove hsl(45, 100%, 45%);
+}
+
+.voteed-button:active {
+    background-color: hsl(90, 100%, 45%);
+    border: 2px inset hsl(90, 100%, 45%);
+    
 }
