@@ -26,6 +26,12 @@ ngApp.config(function ($stateProvider, $urlRouterProvider) {
         .state('recent', {
             url: '/recent',
             templateUrl: 'recent'
+        })
+        .state('user', {
+            url: '/user/:username',
+            controller: function($scope, $state, $stateParams) {
+                console.log("Made it to user controller!");
+            }
         });
     
     //When a user returns from auth
@@ -194,12 +200,18 @@ ngApp.controller('mypins', function($scope, $compile, $http) {
                     titleDiv.textContent = title;
                     pin.append(titleDiv);
                     
-                    var pinInfo = document.createElement("div");
+                    
+                    //Pin Owner Username
+                    var pinInfo = document.createElement("a");
                     pinInfo.className = "pin-info";
+                    //pinInfo.setAttribute("ui-sref", `user({username: ${response.data[i].pinOwner[0].userName}})`);
+                    
+                    pinInfo.setAttribute("ui-sref", `user({username: '${response.data[i].pinOwner[0].userName}'})`);
                     pinInfo.textContent = response.data[i].pinOwner[0].userName;
                     pin.append(pinInfo);
                     pin[0].setAttribute("data-pin-id", response.data[i]._id);
                     $("#mypins-div").append(pin);
+                    $compile(pin)($scope);
                 }
                 console.dir(response);
                 window.globalResp = response;
@@ -247,7 +259,7 @@ ngApp.controller('recent', function($scope, $compile, $http) {
             console.error("%cExpecting $http to be type of function.  $http currently is " + typeof $http, "background-color:black; color: red; font-size:18px");
         }
         if ($("#li-sign-out").data("username") == undefined) {
-            console.log("%cMade it here!", "font-size:20px");
+            console.log("%cNot signed in", "font-size:14px");
             sessionStorage.setItem("preLoginPage", document.location.hash);
         }
         console.log("$http is typeof " + (typeof $http));
@@ -294,8 +306,6 @@ ngApp.controller('recent', function($scope, $compile, $http) {
                         starCount.textContent = response.data[i].likes.length;
                         voteBtn.appendChild(starCount);
                     pin.append(voteBtn);
-                    console.log("Finished appending voteBtn... here is is...");
-                    console.dir(voteBtn);
                     $compile(voteBtn)($scope);
                     
                     if ($("#li-sign-out").data("username") == response.data[i].pinOwner[0].userName) {
@@ -382,20 +392,20 @@ ngApp.controller('recent', function($scope, $compile, $http) {
                 //Increase vote count
                 document.querySelector('[data-pin-id="' + pin2star + '"] .vote-button .star-count').innerText = parseInt(document.querySelector('[data-pin-id="' + pin2star +'"] .vote-button .star-count').innerText,10) + 1;
                 //Make button green to confirm voting
-                document.querySelector('[data-pin-id="57b0d7f1e246c51f040fafa4"] .vote-button').classList.add("voted-button");
+                document.querySelector('[data-pin-id="' + pin2star + '"] .vote-button').classList.add("voted-button");
             }
             if (response.data.status == "vote removed") {
                 //Decrease vote count
                 document.querySelector('[data-pin-id="' + pin2star + '"] .vote-button .star-count').innerText = parseInt(document.querySelector('[data-pin-id="' + pin2star +'"] .vote-button .star-count').innerText,10) - 1;
                 //Remove green button color to confirm (un)voting
-                document.querySelector('[data-pin-id="57b0d7f1e246c51f040fafa4"] .vote-button').classList.remove("voted-button");
+                document.querySelector('[data-pin-id="' + pin2star + '"] .vote-button').classList.remove("voted-button");
             }
         }, 
         //Error function
         function(response){
             console.log("At error...");
             console.dir(response);
-            if (response.status == 401) {
+            if (response.status == 401) { //If we get unauthorized, we need to sign in.  This takes care of that. 
                 //There will be UI feedback for this, too, to show the end-user they are going to be signed in to perform this action
                 document.querySelector('#li-sign-in a').click();
             }
