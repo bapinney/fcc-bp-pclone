@@ -285,7 +285,7 @@ ngApp.controller('recent', function($scope, $compile, $http) {
 
                     var voteBtn = document.createElement("button");
                         voteBtn.className = "vote-button";
-                        voteBtn.setAttribute("ng-click", "showAlert($event)")
+                        voteBtn.setAttribute("ng-click", "starPin($event)")
                         var star = document.createElement("i");
                         star.className = "fa fa-star";
                         voteBtn.appendChild(star);
@@ -363,9 +363,46 @@ ngApp.controller('recent', function($scope, $compile, $http) {
         
     });
     
-    $scope.showAlert = function(evntVar) {
-            console.dir(evntVar)
-        }
+    $scope.starPin = function(eventVar) {
+        console.log("%cStar pin called...", "color:blue");
+        console.log("Here is eventVar");
+        console.dir(eventVar);
+        var pin2star = eventVar.currentTarget.parentNode.dataset.pinId;
+        var htConfig = {
+            method: "POST",
+            data: {pinId: pin2star},
+            url: "/starpin"
+        };
+        
+        $http(htConfig).then(function(response) {
+            console.log("At star .then...");
+            window.dbgStar = response;
+            console.dir(response);    
+            if (response.data.status == "vote added") {
+                //Increase vote count
+                document.querySelector('[data-pin-id="' + pin2star + '"] .vote-button .star-count').innerText = parseInt(document.querySelector('[data-pin-id="' + pin2star +'"] .vote-button .star-count').innerText,10) + 1;
+                //Make button green to confirm voting
+                document.querySelector('[data-pin-id="57b0d7f1e246c51f040fafa4"] .vote-button').classList.add("voted-button");
+            }
+            if (response.data.status == "vote removed") {
+                //Decrease vote count
+                document.querySelector('[data-pin-id="' + pin2star + '"] .vote-button .star-count').innerText = parseInt(document.querySelector('[data-pin-id="' + pin2star +'"] .vote-button .star-count').innerText,10) - 1;
+                //Remove green button color to confirm (un)voting
+                document.querySelector('[data-pin-id="57b0d7f1e246c51f040fafa4"] .vote-button').classList.remove("voted-button");
+            }
+        }, 
+        //Error function
+        function(response){
+            console.log("At error...");
+            console.dir(response);
+            if (response.status == 401) {
+                //There will be UI feedback for this, too, to show the end-user they are going to be signed in to perform this action
+                document.querySelector('#li-sign-in a').click();
+            }
+        });
+        
+        
+    };
     
     $scope.delete = function(evntVar) {
         var pinId = evntVar.currentTarget.parentNode.dataset.pinId;
@@ -393,7 +430,7 @@ ngApp.controller('recent', function($scope, $compile, $http) {
                 });
             }
         })
-    }
+    };
     
 });
 

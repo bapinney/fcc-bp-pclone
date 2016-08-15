@@ -225,12 +225,23 @@ main.ng-enter-active {
     transition: 300ms cubic-bezier(.22, .61, .36, 1);
 }
 
+.voted-button {
+    background-color: hsl(120, 44%, 45%);
+    border: 2px outset hsl(120, 44%, 45%);
+    box-shadow: 0px 0px 10px 1px hsl(60, 100%, 50%);
+    border-radius: 5px;
+    color: white;
+    float: right;
+    margin: 0px 2px;
+    transition: 1s cubic-bezier(.22, .61, .36, 1);    
+}
+
 .vote-button:hover {
     background-color: hsl(45, 100%, 45%);
     border: 2px groove hsl(45, 100%, 45%);
 }
 
-.voteed-button:active {
+.vote-button:active {
     background-color: hsl(90, 100%, 45%);
     border: 2px inset hsl(90, 100%, 45%);
     

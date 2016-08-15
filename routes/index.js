@@ -15,6 +15,15 @@ var loggedIn = function(req, res, next) {
     }
 };
 
+var errIfLoggedOut = function(req, res, next) {
+    if (req.user) {
+        next();
+    }
+    else {
+        res.status(401).send("Must be signed in to perform this action"); //Unauthenticated
+    }
+}
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
     if (typeof req.user !== "undefined") {
@@ -42,27 +51,6 @@ router.get('/auth/twitter/callback', passport.authenticate('twitter', {
 	successRedirect : '/#/loginRtn',
 	failureRedirect : '/'
 }));
-
-/*
-router.post('/deletePin', function (req, res, next) {
-    if (typeof req.body.pinId !== "string") {
-        res.json({
-            result: "fail",
-            error: "pinId is not string"
-        });
-    } else {
-        console.log(chalk.green("Inside else..."));
-        Pin.findById(req.body.pinId, function (err, doc) {
-            if (err) {
-                console.log(err);
-            }
-            if (doc) {
-            }
-        });
-        res.json({result: "success"});
-    }
-});
-*/
 
 router.post('/deletePin', function (req, res, next) {
     if (typeof req.user === "undefined") {
@@ -151,8 +139,7 @@ router.get('/loginRtn', function(req, res, next) {
     res.render("loginrtn.pug");
 });
 
-//loggedIn middleware is being used because you can't log out if you aren't logged in...
-router.get('/logout', loggedIn, function(req, res, next) {
+router.get('/logout', function(req, res, next) {
     req.logout();
     res.render('logout.pug');
 });
@@ -213,5 +200,13 @@ router.post('/addpin', loggedIn, function(req, res, next) {
     console.dir(req.body);
     pin.create(req, res);
 });
+
+
+//When the user clicks the star on a pin
+router.post('/starpin', errIfLoggedOut, function(req, res, next) {
+    console.log("Star Pin called");
+    console.dir(req.body);
+    pin.star(req, res);
+})
 
 module.exports = router;

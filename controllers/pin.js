@@ -87,5 +87,63 @@ exports.getUserPins = function(req, res) {
             res.json({error: "No pins found"});
         }
     });
+};
+
+//Star (or unstar) a pin
+exports.star = function(req, res) {
+    console.log(chalk.cyan("Star called"));
+    if (typeof req.body.pinId == "undefined" || req.body.pinId.length != 24) {
+        res.json({error: "pinId undefined or not of length 24"});
+        return false;
+    }
+    var pinId = req.body.pinId;
     
+    //req.user is available for use because the route coming here 
+    var currentUser = {
+        userProvider:   req.user.provider,
+        userId:         req.user.id,
+        userName:       req.user.username
+    };
+    
+    console.log("About to call findbyid");
+    Pin.findById(pinId, function(err, doc) {
+        if (err) {
+            console.log("Error while retrieving pin");
+            console.error(err);
+            res.json({error: "Error while retrieving pin"});
+            return false;
+        }
+        
+        console.log("Checking if user's vote is not in array...");
+        if (doc.likes.indexOf(currentUser.toString()) == -1) {
+            console.log("User's vote is not in array...");
+            console.log("Here is that array...");
+            console.dir(doc.likes);
+            doc.likes.push(currentUser);
+            doc.save(function(err) {
+                if (err) {
+                    res.json({error: "Unable to add vote"});
+                    return false;
+                }
+                console.log(chalk.green("Vote Added!"));
+                res.json({status: "vote added"});
+                return true;
+            })
+        }
+        else {
+            console.log(chalk.yellow("User's vote is already in the array.  Removing..."));
+            doc.likes.remove(currentUser);
+            doc.save(function(err) {
+                if (err) {
+                    res.json({error: "Unable to remove vote"});
+                    return false;
+                }
+                console.log(chalk.green("Vote removed!"));
+                res.json({status: "vote removed"});
+                return true;
+            });
+        }
+        
+    });
+        
 };
