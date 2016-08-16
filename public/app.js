@@ -335,12 +335,14 @@ ngApp.controller('recent', function($scope, $location, $compile, $http) {
                     titleDiv.textContent = title;
                     pin.append(titleDiv);
                     
-                    var pinInfo = document.createElement("div");
+                    var pinInfo = document.createElement("a");
                     pinInfo.className = "pin-info";
+                    pinInfo.setAttribute("ui-sref", `user({username: '${response.data[i].pinOwner[0].userName}'})`);
                     pinInfo.textContent = response.data[i].pinOwner[0].userName;
                     pin.append(pinInfo);
                     pin[0].setAttribute("data-pin-id", response.data[i]._id);
                     $("#recent-div").append(pin);
+                    $compile(pin)($scope);
                 }
                 console.dir(response);
                 window.globalResp = response;
