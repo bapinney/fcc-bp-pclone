@@ -252,15 +252,24 @@ ngApp.controller('mypins', function($scope, $compile, $http) {
     });
 });
 
-ngApp.controller('recent', function($scope, $compile, $http) {
-    $scope.$on('$stateChangeSuccess', function() { 
-        console.log("%c At recent pins!", "color:orange; font-size:20px");
-        if (typeof $http !== "function") {
-            console.error("%cExpecting $http to be type of function.  $http currently is " + typeof $http, "background-color:black; color: red; font-size:18px");
-        }
+ngApp.controller('recent', function($scope, $location, $compile, $http) {
+    
+    /*  Broadcasted after a URL was changed.
+        https://docs.angularjs.org/api/ng/service/$location */
+    $scope.$on('$locationChangeSuccess', function() {
+        console.dir($location);
+        console.log("Location change success!  $location.path is " + $location.path() + " while document.location.hash is " + document.location.hash);
         if ($("#li-sign-out").data("username") == undefined) {
             console.log("%cNot signed in", "font-size:14px");
             sessionStorage.setItem("preLoginPage", document.location.hash);
+        }
+    })
+    $scope.$on('$stateChangeSuccess', function() { 
+        console.dir($location);
+        console.log("%c At recent pins!", "color:orange;");
+        console.log("State change success!  $location.path is " + $location.path() + " while document.location.hash is " + document.location.hash);
+        if (typeof $http !== "function") {
+            console.error("%cExpecting $http to be type of function.  $http currently is " + typeof $http, "background-color:black; color: red; font-size:18px");
         }
         console.log("$http is typeof " + (typeof $http));
         console.log("Loading recent pins...");
