@@ -178,8 +178,13 @@ router.get('/rpdata', function(req, res, next) {
 });
 
 
-//User Pin data
-router.get('/users/*', function(req, res, next) {
+router.get('/user', function(req, res, next) {
+    res.render('userpins.pug');
+})
+
+
+//User Pin data -- Should get served by JSON?
+router.get('/updata/*', function(req, res, next) {
     console.dir(req);
     if (typeof req.params[0] !== "undefined") {
         res.locals.forUserName = req.params[0];
@@ -187,11 +192,7 @@ router.get('/users/*', function(req, res, next) {
     }
     else {
         res.json({error: "User parameter missing"});
-    }
-})
-
-router.get('/updata', function(req, res, next) {
-    
+    }    
 });
 
 
